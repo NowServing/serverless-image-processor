@@ -1,5 +1,5 @@
 service:
-  name: serverless-image-processor
+  name: ns-image-processor
 
 plugins:
   - serverless-webpack
@@ -96,3 +96,6 @@ resources:
       Description: "Image bucket"
       Value:
         Ref: SourceBucket
+layers:
+  nodejs10:
+    path: layer/nodejs/v10.x
