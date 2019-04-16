@@ -46,6 +46,8 @@ functions:
     handler: src/index.handle
     timeout: 15
     memorySize: 3008
+    layers:
+      - 'arn:aws:lambda:us-east-1:553035198032:layer:nodejs10:12'
     environment:
       BUCKET: ${self:custom.bucketName}
     events:
@@ -96,6 +98,3 @@ resources:
       Description: "Image bucket"
       Value:
         Ref: SourceBucket
-layers:
-  nodejs10:
-    path: layer/nodejs/v10.x
