@@ -6,6 +6,8 @@ plugins:
   - serverless-s3-local
   - serverless-apigw-binary
   - serverless-offline
+  - serverless-iam-roles-per-function
+  - serverless-plugin-existing-s3
 
 provider:
   name: aws
@@ -14,6 +16,12 @@ provider:
   stage: ${opt:stage, 'dev'}
   endpointType: REGIONAL
   iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:GetBucketNotification"
+        - "s3:PutBucketNotification"
+      Resource:
+        Fn::Join: [ "", [ "arn:aws:s3:::", Ref: SourceBucket ] ]
     - Effect: Allow
       Action:
         - s3:ListBucket
@@ -42,6 +50,18 @@ custom:
       - '*/*'
 
 functions:
+  signer:
+    handler: src/create.handler
+    timeout: 15
+    memorySize: 128
+    layers:
+      - 'arn:aws:lambda:us-east-1:553035198032:layer:nodejs10:12'
+      environment:
+        BUCKET: ${self:custom.bucketName}
+      events:
+        - http:
+            method: get
+            path: /sign/{proxy+}
   processor:
     handler: src/index.handle
     timeout: 15
